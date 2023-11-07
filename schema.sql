@@ -1,3 +1,6 @@
+-- Install the pg_trgm extension for trigram similarity searching
+CREATE EXTENSION pg_trgm;
+
 DROP TABLE IF EXISTS metadata;
 DROP SCHEMA IF EXISTS metadata CASCADE;
 
@@ -15,3 +18,8 @@ CREATE TABLE IF NOT EXISTS metadata (
   openapi_url TEXT NOT NULL,
   openapi_hash TEXT NOT NULL
 );
+
+
+-- create a tsvector colum for searching that uses the company, programming language, and api name
+ALTER TABLE metadata ADD COLUMN ts tsvector
+    GENERATED ALWAYS AS (to_tsvector('english', company || ' ' || programming_language || ' ' || api_name)) STORED;
